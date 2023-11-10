@@ -8,9 +8,14 @@ from io import BytesIO
 from skimage import io
 from ultralytics import YOLO
 
-from detectron2.config import get_cfg
-from detectron2.engine import DefaultPredictor
-from detectron2 import model_zoo
+try:
+    from detectron2 import model_zoo
+    from detectron2.config import get_cfg
+    from detectron2.engine import DefaultPredictor
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", 'git+https://github.com/facebookresearch/detectron2.git'])
+finally:
+
 
 classes= [ "G" + str(i).zfill(3) for i in range(1,63)]  # Best to take from the class mapping file
 
