@@ -16,7 +16,7 @@ try:
     from detectron2.config import get_cfg
     from detectron2.engine import DefaultPredictor
 except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", 'git+https://github.com/facebookresearch/detectron2.git'])
+    subprocess.check_call([sys.executable, "-m", "pip", "install", 'detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cpu/torch1.10/index.html'])
 finally:
     from detectron2 import model_zoo
     from detectron2.config import get_cfg
