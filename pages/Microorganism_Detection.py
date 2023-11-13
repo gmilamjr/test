@@ -6,7 +6,7 @@ from styles import streamlit_style
 streamlit_style('Microorganism Detection', layout = 'wide', page_icon=None)
 
 st.title('Microorganism Detection')
-model = get_detection_model("models/object_detection/detectron2_model_0005499.pth")
+model = get_detection_model()
 
 # Gettting image
 file = st.file_uploader("Upload image for detections")
@@ -26,7 +26,11 @@ if file is not None:
         st.write("Uploaded Image")
         st.image(img)
     with col2:
-        st.write("Microorganims Detected")
+        col3,col4=st.columns(2)
+        with col3:
+            st.write("Microorganims Detected")
+        with col4:
+            viz_name = st.toggle('Display Microorganism Name')
         with st.spinner("Predicting"):
-            result_img = detection_img(model, img, conf_threshold, iou_threshold)
+            result_img = detection_img(model, img, conf_threshold, iou_threshold, viz_name)
             st.image(result_img)

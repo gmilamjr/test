@@ -1,28 +1,27 @@
+import bysp
 import cv2
+import glob
+import os
 import streamlit as st
 import numpy as np
 import torch
 import torchvision
+import pandas as pd
 
 from io import BytesIO
 from skimage import io
 from ultralytics import YOLO
 
-import subprocess
-import sys
+from detectron2 import model_zoo
+from detectron2.config import get_cfg
+from detectron2.engine import DefaultPredictor
 
-try:
-    from detectron2 import model_zoo
-    from detectron2.config import get_cfg
-    from detectron2.engine import DefaultPredictor
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", 'detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cpu/torch1.10/index.html'])
-finally:
-    from detectron2 import model_zoo
-    from detectron2.config import get_cfg
-    from detectron2.engine import DefaultPredictor
+class_df = pd.read_csv("resources/class_mapping_alok.csv")
 
-classes= [ "G" + str(i).zfill(3) for i in range(1,63)]  # Best to take from the class mapping file
+detectron2_path = "models/object_detection/detectron2_weights.pth"
+
+if not os.path.exists(detectron2_path):
+    bysp.combine_file(filename=detectron2_path, parts=glob.glob("models/object_detection/detectron2_weights.pth.*"), save=True)
 
 ##Binary classification model. Model Author::Alok
 @st.cache_resource()
@@ -49,7 +48,7 @@ def get_image(file):
     return img
 
 @st.cache_resource()
-def get_detection_model(model_path):
+def get_detection_model(model_path=detectron2_path):
     # load model
     cfg = get_cfg()
     cfg.merge_from_file(model_zoo.get_config_file('COCO-Detection/retinanet_R_101_FPN_3x.yaml'))
@@ -60,12 +59,16 @@ def get_detection_model(model_path):
     
     return predictor
 
-
-def detection_img(model, img, conf_threshold, iou_threshold):
-    
-    results = model(img)
+@st.cache_data(max_entries=1, show_spinner=False, ttl = 2*60)
+def get_img_results(_model, img, conf_threshold, iou_threshold):
+    results = _model(img)
     processed_results = preprocess_bbox(results['instances'], conf_threshold, iou_threshold)
-    img = show_bbox(img, processed_results, classes)
+    return processed_results
+
+def detection_img(model, img, conf_threshold, iou_threshold, viz_name=False):
+    
+    processed_results = get_img_results(model, img, conf_threshold, iou_threshold)
+    img = show_bbox(img, processed_results, class_df['Class Name' if viz_name else 'Class ID'])
     
     return img
     
@@ -93,13 +96,6 @@ def show_bbox(img,target,classes,color=(0,0,255)):
     labels=target["labels"].numpy()
     scores=target["scores"].numpy()
     img=img.copy()
-    
-    
-    '''
-    look at unique labels -> objects
-    N = len(objects)
-    colors = sns.color_palette(palette = 'plasma', n_colors=N)
-    c_dict = dict(map(lambda i,j : (i,tuple([int(c * 255) for c in j])) , objects, colors))'''
     
     for i,box in enumerate(boxes):
         text=f"{classes[labels[i]]}-{scores[i]:.2f}"
