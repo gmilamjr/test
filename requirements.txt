@@ -3,6 +3,13 @@ opencv-python-headless==4.8.0.76
 Pillow==9.5
 scikit-image==0.22.0
 streamlit==1.27.0
+ultralytics==8.0.208
+
+#Torch
+--find-links https://download.pytorch.org/whl/torch_stable.html
 torch==1.10.0+cpu
 torchvision==0.11.0+cpu
-ultralytics==8.0.208
+
+#Detectron2
+https://dl.fbaipublicfiles.com/detectron2/wheels/cpu/torch1.10/index.html
+detectron2==0.6
