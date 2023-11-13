@@ -11,5 +11,5 @@ torch==1.10.0+cpu
 torchvision==0.11.0+cpu
 
 #Detectron2
-https://dl.fbaipublicfiles.com/detectron2/wheels/cpu/torch1.10/index.html
-detectron2==0.6
+-f https://dl.fbaipublicfiles.com/detectron2/wheels/cpu/torch1.10/index.html
+detectron2
