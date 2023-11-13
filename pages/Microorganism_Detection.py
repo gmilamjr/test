@@ -6,7 +6,7 @@ from styles import streamlit_style
 streamlit_style('Microorganism Detection', layout = 'wide', page_icon=None)
 
 st.title('Microorganism Detection')
-model = get_detection_model()
+model = get_detection_model("models/object_detection/detectron2_weights.pth")
 
 # Gettting image
 file = st.file_uploader("Upload image for detections")

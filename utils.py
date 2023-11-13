@@ -18,10 +18,10 @@ from detectron2.engine import DefaultPredictor
 
 class_df = pd.read_csv("resources/class_mapping_alok.csv")
 
-detectron2_path = "models/object_detection/detectron2_weights.pth"
+#detectron2_path = "models/object_detection/detectron2_weights.pth"
 
-if not os.path.exists(detectron2_path):
-    bysp.combine_file(filename=detectron2_path, parts=glob.glob("models/object_detection/detectron2_weights.pth.*"), save=True)
+#if not os.path.exists(detectron2_path):
+#    bysp.combine_file(filename=detectron2_path, parts=glob.glob("models/object_detection/detectron2_weights.pth.*"), save=True)
 
 ##Binary classification model. Model Author::Alok
 @st.cache_resource()
@@ -48,7 +48,7 @@ def get_image(file):
     return img
 
 @st.cache_resource()
-def get_detection_model(model_path=detectron2_path):
+def get_detection_model(model_path):
     # load model
     cfg = get_cfg()
     cfg.merge_from_file(model_zoo.get_config_file('COCO-Detection/retinanet_R_101_FPN_3x.yaml'))
